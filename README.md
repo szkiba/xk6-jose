@@ -4,12 +4,12 @@ A k6 extension for *Javascript Object Signing and Encryption (JOSE)* standards.
 
 **Features**
 
- - [parse](docs/jwk.md#parse) JSON Web Key
- - [generate](docs/jwk.md#generate) new JSON Web Key
- - [adopt](docs/jwk.md#adopt) existing JSON Web Key
- - [sign](docs/jwt.md#sign) JSON Web Token
- - [verify](docs/jwt.md#verify) JSON Web Token signature
- - [decode](docs/jwt.md#verify) JSON Web Token without signature verification
+ - [parse](docs/modules/jwk.md#parse) JSON Web Key
+ - [generate](docs/modules/jwk.md#generate) new JSON Web Key
+ - [adopt](docs/modules/jwk.md#adopt) existing JSON Web Key
+ - [sign](docs/modules/jwt.md#sign) JSON Web Token
+ - [verify](docs/modules/jwt.md#verify) JSON Web Token signature
+ - [decode](docs/modules/jwt.md#verify) JSON Web Token without signature verification
 
 For complete API documentation click [here](docs/README.md)!
 
