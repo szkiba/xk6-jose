@@ -34,7 +34,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/loadimpact/k6/js/common"
+	"go.k6.io/k6/js/common"
 	"gopkg.in/square/go-jose.v2"
 )
 
