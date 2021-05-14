@@ -23,7 +23,7 @@
 package jose
 
 import (
-	"github.com/loadimpact/k6/js/modules"
+	"go.k6.io/k6/js/modules"
 	"github.com/szkiba/xk6-jose/jwk"
 	"github.com/szkiba/xk6-jose/jwt"
 )
