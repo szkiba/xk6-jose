@@ -43,7 +43,7 @@ tasks:
     generates:
       - k6
     cmds:
-      - xk6 build --with github.com/szkiba/xk6-crypto --with github.com/szkiba/xk6-jose=$(pwd)
+      - xk6 build --with github.com/szkiba/xk6-crypto --with github.com/szkiba/xk6-jose=$(pwd) --with github.com/szkiba/xk6-crypto@latest
 
   test:
     deps: [build]

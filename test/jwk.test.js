@@ -53,7 +53,7 @@ export default function () {
   describe("generate from seed", (t) => {
     const seed = new ArrayBuffer(32);
     const bytes = new Uint8Array(seed);
-    randomBytes(32).forEach((value, idx) => (bytes[idx] = value));
+    new Uint8Array(randomBytes(32)).forEach((value, idx) => (bytes[idx] = value));
     const pair = xcrypto.generateKeyPair(ALG, seed);
 
     const key = JSON.parse(JSON.stringify(jwk.generate(ALG, seed)));
@@ -78,7 +78,7 @@ export default function () {
   describe("adopt", (t) => {
     const seed = new ArrayBuffer(32);
     const bytes = new Uint8Array(seed);
-    randomBytes(32).forEach((value, idx) => (bytes[idx] = value));
+    new Uint8Array(randomBytes(32)).forEach((value, idx) => (bytes[idx] = value));
 
     const pair = xcrypto.generateKeyPair(ALG, seed);
     let key = JSON.parse(JSON.stringify(jwk.adopt(ALG, pair.privateKey)));
