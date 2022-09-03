@@ -1,7 +1,7 @@
 # Namespace: jwt
 
 Module jwt aims to provide an implementation of the JSON Web Token.
-Only compact serializtion is supported.
+Only compact serialization is supported.
 
 ## Table of contents
 

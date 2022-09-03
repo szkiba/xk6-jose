@@ -9,3 +9,5 @@ The underlying implementation is https://github.com/square/go-jose
 
 - [jwk](modules/jwk.md)
 - [jwt](modules/jwt.md)
+- [jws](modules/jws.md)
+- [jwe](modules/jwe.md)
