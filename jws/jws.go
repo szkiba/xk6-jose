@@ -21,3 +21,12 @@ func (m *Module) Sign(ctx context.Context, key *jose.JSONWebKey, payload string,
 	}
 	return obj.CompactSerialize()
 }
+
+func (m *Module) Verify(ctx context.Context, key *jose.JSONWebKey, jws string) (string, error) {
+	obj, err := jose.ParseSigned(jws)
+	if err != nil {
+		return "", err
+	}
+	plaintextBytes, err := obj.Verify(key)
+	return string(plaintextBytes), err
+}

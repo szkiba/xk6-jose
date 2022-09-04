@@ -43,8 +43,8 @@ Create JWE serialized form based on string payload (e.g. json)
 | :------ | :------ | :------ |
 | `key` | [*Key*](../interfaces/jwk.key.md) | The key wrapping key |
 | `payload` | *string* | The payload to sign. e.g. json claims |
-| `encAlg` | *string* | Content encryption algorithm, supported values: See [JWA RFC chapter 4](https://www.rfc-editor.org/rfc/rfc7518#section-4.1) for details on supported algorithms |
-| `keyAlg` | *string* | Key wrapping encryption algorithm, supported values: See [JWA RFC chapter 5](https://www.rfc-editor.org/rfc/rfc7518#section-5.1) for details on supported algorithms |
+| `encAlg` | *string* | Content encryption algorithm. See [JWA RFC chapter 4](https://www.rfc-editor.org/rfc/rfc7518#section-4.1) for details on supported algorithms |
+| `keyAlg` | *string* | Key wrapping encryption algorithm. See [JWA RFC chapter 5](https://www.rfc-editor.org/rfc/rfc7518#section-5.1) for details on supported algorithms |
 
 **Returns:** *string*
 
