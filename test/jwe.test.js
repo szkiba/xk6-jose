@@ -34,18 +34,8 @@ import encoding from 'k6/encoding';
 const rsaAlgs = ["RSA-OAEP-256"];
 const ecAlgs = ["ECDH-ES","ECDH-ES+A128KW","ECDH-ES+A192KW","ECDH-ES+A256KW"]
 const encAlgs = ["A128CBC-HS256","A192CBC-HS384","A256CBC-HS512","A128GCM","A192GCM","A256GCM"];
-// const encAlgs = ["A256GCM"];
 
-const publicRsa = `
-{
-    "kty": "RSA",
-    "e": "AQAB",
-    "use": "enc",
-    "kid": "xk6-jose-tests-rsa-2",
-    "n": "j6kzw7xUae5VurcPhFkYDSYojA44qghRO4dyLN81vKJy1ario_dMhPKpGx0fUDVUz3gmlEgBadUeNhl-BOTSqoNuOZNDC54TVSW3UEf5NhHFb_kkmCbNreAI8PZXBzy4HF10f4jmB4bQeGrfkIlbKdfJ_2PyPANt7Qflsaf5oiIY8Cs1CNwZmG3DEjS6AuuzWTVtFzkq3AP5vdBMBlA58eqNgfFp_RgSzIdbUi05kyxXhCkpEgiGvsgxcd1VdsR9lb_mNx0zA3aJdIF4W_Puy1IxGylGMHO--N26yxZmxhV7XibqNGO4NVpKVXygPlXMA8k-qUbscg9nJ3n-pSUK5Q"
-}
-`;
-const privateRsa = `
+const rsaKey = `
 {
     "p": "zvGdcCQlvW5HN1XxYnMk53rv7gcU2jNpyCzjh0Wi179ajsZz3vqg-U9fI47el8-sQBwJDmRwrAGjTPPECVRcwVrX2-h0zmy78VqBr0ZiMftej7sXT-z_p61u2AqreqrBXF15yWMZpcO8veUYmwjUwK-MugS2U6pRItVgAISvz88",
     "kty": "RSA",
@@ -60,20 +50,10 @@ const privateRsa = `
     "n": "j6kzw7xUae5VurcPhFkYDSYojA44qghRO4dyLN81vKJy1ario_dMhPKpGx0fUDVUz3gmlEgBadUeNhl-BOTSqoNuOZNDC54TVSW3UEf5NhHFb_kkmCbNreAI8PZXBzy4HF10f4jmB4bQeGrfkIlbKdfJ_2PyPANt7Qflsaf5oiIY8Cs1CNwZmG3DEjS6AuuzWTVtFzkq3AP5vdBMBlA58eqNgfFp_RgSzIdbUi05kyxXhCkpEgiGvsgxcd1VdsR9lb_mNx0zA3aJdIF4W_Puy1IxGylGMHO--N26yxZmxhV7XibqNGO4NVpKVXygPlXMA8k-qUbscg9nJ3n-pSUK5Q"
 }
 `;
-const privateEc = `
+const ecKey = `
 {
     "kty": "EC",
     "d": "4hpgpcEu7abpl06G6qPXVzA9PoJZoQfYBzqfHEuWJwg",
-    "use": "enc",
-    "crv": "P-256",
-    "kid": "xk6-jose-tests-ec-3",
-    "x": "6UOCiHZ-sCPc13tBGPrWbMKtgTmwOPGyhKxEdTZVgaA",
-    "y": "cPBzf_zqFJ8-XS0a7byPqAayGKSIiF69NAN2n-NAD-g"
-}
-`;
-const publicEc = `
-{
-    "kty": "EC",
     "use": "enc",
     "crv": "P-256",
     "kid": "xk6-jose-tests-ec-3",
@@ -88,11 +68,10 @@ export default function () {
    * Test all rsa algs with all contentEncryption algs
    */
   rsaAlgs.forEach((alg) => {
-    const publicKey = jwk.parse(publicRsa);
-    const privateKey = jwk.parse(privateRsa);
+    const privateKey = jwk.parse(rsaKey);
     encAlgs.forEach((enc) => {
       describe(`${alg}-${enc}`, (t) => {
-        verifyAlgEnc(publicKey, enc, alg, t, privateKey);
+        verifyAlgEnc(privateKey, enc, alg, t);
       })
     })
   })
@@ -101,30 +80,33 @@ export default function () {
    * Test all ec algs with all contentEncryption algs
    */
   ecAlgs.forEach((alg) => {
-    const publicKey = jwk.parse(publicEc);
-    const privateKey = jwk.parse(privateEc);
+    const privateKey = jwk.parse(ecKey);
     encAlgs.forEach((enc) => {
       describe(`${alg}-${enc}`, (t) => {
-        verifyAlgEnc(publicKey, enc, alg, t, privateKey);
+        verifyAlgEnc(privateKey, enc, alg, t);
       })
     })
   })
 
 
-  function verifyAlgEnc(publicKey, enc, kwAlg, t, privateKey) {
+  function verifyAlgEnc(key, enc, kwAlg, t) {
     const payload = {foo: "bar", answer: 42};
-    const kid = JSON.parse(JSON.stringify(publicKey)).kid; //Hacky way to get jwk json fields :)
     try {
-      let jweString = jwe.encrypt(publicKey, JSON.stringify(payload), enc, kwAlg);
+      let jweString = jwe.encrypt(key.public(), JSON.stringify(payload), enc, kwAlg);
+      //Validate basic layout
       t.expect(jweString.length).as("jweString length").toBeGreaterThan(0);
       const fields = jweString.split(".");
       t.expect(fields.length).as("number of fields").toEqual(5);
+
+      //Validate header is as expected
       const headersString = encoding.b64decode(fields[0], 'rawurl', 's');
       const headers = JSON.parse(headersString);
-      t.expect(headers.kid).as("JWE header value 'kid'").toEqual(kid);
+      t.expect(headers.kid).as("JWE header value 'kid'").toEqual(key.key_id);
+      t.expect(headers.alg).as("JWE header value 'alg'").toEqual(kwAlg);
+      t.expect(headers.enc).as("JWE header value 'enc'").toEqual(enc);
 
-      //Decrypt and validate
-      let decryptedString = jwe.decryptAsString(privateKey, jweString);
+      //Decrypt and validate payload
+      let decryptedString = jwe.decryptAsString(key, jweString);
       let decrypted = JSON.parse(decryptedString);
       const expect = (prop) => t.expect(decrypted[prop]).as(prop);
       expect("answer").toEqual(42);
