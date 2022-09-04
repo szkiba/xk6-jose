@@ -93,3 +93,27 @@ export namespace jwt {
    */
   function verify(token: string, ...key: jwk.Key[]): object;
 }
+
+/**
+ * Module jwt aims to provide an implementation of the JSON Web Encryption.
+ * Only compact serialization is supported.
+ */
+export namespace jwe {
+  /**
+   * Create JWE serialized form based on string payload (e.g. json)
+   * @param key The key wrapping key
+   * @param payload The payload to sign. e.g. json claims
+   * @param encAlg Content encryption algorithm, supported values: See [JWA RFC chapter 4](https://www.rfc-editor.org/rfc/rfc7518#section-4.1) for details on supported algorithms
+   * @param keyAlg Key wrapping encryption algorithm, supported values: See [JWA RFC chapter 5](https://www.rfc-editor.org/rfc/rfc7518#section-5.1) for details on supported algorithms
+   * @return string jwe string in serialized form
+   */
+  function encrypt(key: jwk.Key, payload: string, encAlg: string, keyAlg: string): string
+
+  /**
+   * Decrypt JWE serialized form based to string payload (e.g. json)
+   * @param key The Key wrapping key
+   * @param jwe JWE in compact serialization
+   * @return string jwe payload as string (e.g. json)
+   */
+  function decryptAsString(key: jwk.Key, jwe: string): string
+}
