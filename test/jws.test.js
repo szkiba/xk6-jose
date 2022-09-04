@@ -52,7 +52,6 @@ export default function () {
     const key1 = jwk.parse(ecKey)
 
     const jwsString = jws.sign(key1, JSON.stringify({ foo: "bar", answer: 42 }), "ES256");
-    console.log(jwsString)
     const payloadString = jws.verify(key1.public(), jwsString);
     const payload = JSON.parse(payloadString)
     const expect = (prop) => t.expect(payload[prop]).as(prop);
