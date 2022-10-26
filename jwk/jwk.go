@@ -30,7 +30,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"reflect"
 	"strings"
 
@@ -47,7 +46,6 @@ func New() *Module {
 var ErrUnsupportedAlgorithm = errors.New("unsupported algorithm")
 
 func (m *Module) Parse(source string) (*jose.JSONWebKey, error) {
-	log.Printf("CHEGUEI AQUI PORRA!")
 	key := &jose.JSONWebKey{}
 
 	if err := key.UnmarshalJSON([]byte(source)); err != nil {
