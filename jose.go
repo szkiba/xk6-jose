@@ -24,8 +24,9 @@ package jose
 
 import (
 	"go.k6.io/k6/js/modules"
-	"github.com/szkiba/xk6-jose/jwk"
-	"github.com/szkiba/xk6-jose/jwt"
+
+	"github.com/pedroyremolo/xk6-jose/jwk"
+	"github.com/pedroyremolo/xk6-jose/jwt"
 )
 
 // Register the extensions on module initialization.

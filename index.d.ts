@@ -26,6 +26,13 @@ export namespace jwk {
   interface Key {}
 
   /**
+   * Print the informed string
+   *
+   * @param bar A random string
+   */
+  function foo(bar: string);
+
+  /**
    * Parse a key from its JSON representation.
    *
    * @param source JSON source to parse
