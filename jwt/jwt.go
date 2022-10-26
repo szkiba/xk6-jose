@@ -23,7 +23,6 @@
 package jwt
 
 import (
-	"context"
 	"errors"
 	"fmt"
 
@@ -39,7 +38,7 @@ func New() *Module {
 
 var ErrUnsupportedKey = errors.New("unsupported key")
 
-func (m *Module) Sign(ctx context.Context, key *jose.JSONWebKey, payload, header map[string]interface{}) (string, error) {
+func (m *Module) Sign(key *jose.JSONWebKey, payload, header map[string]interface{}) (string, error) {
 	opts := &jose.SignerOptions{}
 	opts = opts.WithType("JWT")
 
@@ -60,7 +59,7 @@ func (m *Module) Sign(ctx context.Context, key *jose.JSONWebKey, payload, header
 	return str, nil
 }
 
-func (m *Module) Decode(ctx context.Context, compact string) (interface{}, error) {
+func (m *Module) Decode(compact string) (interface{}, error) {
 	token, err := jwt.ParseSigned(compact)
 	if err != nil {
 		return nil, err
@@ -75,7 +74,7 @@ func (m *Module) Decode(ctx context.Context, compact string) (interface{}, error
 	return payload, nil
 }
 
-func (m *Module) Verify(ctx context.Context, compact string, keys ...interface{}) (interface{}, error) {
+func (m *Module) Verify(compact string, keys ...interface{}) (interface{}, error) {
 	token, err := jwt.ParseSigned(compact)
 	if err != nil {
 		return nil, err
