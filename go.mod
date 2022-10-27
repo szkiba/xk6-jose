@@ -1,4 +1,4 @@
-module github.com/pedroyremolo/xk6-jose
+module github.com/szkiba/xk6-jose
 
 go 1.18
 

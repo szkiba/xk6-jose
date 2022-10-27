@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2021 Iván Szkiba
+// Copyright (c) 2022 Iván Szkiba
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,22 +20,50 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package jose
+package v1
 
 import (
-	"go.k6.io/k6/js/modules"
-
-	jwkv0 "github.com/szkiba/xk6-jose/jwk/v0"
-	jwkv1 "github.com/szkiba/xk6-jose/jwk/v1"
-	jwtv0 "github.com/szkiba/xk6-jose/jwt/v0"
-	jwtv1 "github.com/szkiba/xk6-jose/jwt/v1"
+	"github.com/szkiba/xk6-jose/jwk/internals"
 )
 
-// Register the extensions on module initialization.
-func init() {
-	modules.Register("k6/x/jose/jwk/v0", jwkv0.New())
-	modules.Register("k6/x/jose/jwk/v1", jwkv1.New())
+type Module struct{}
 
-	modules.Register("k6/x/jose/jwt/v0", jwtv0.New())
-	modules.Register("k6/x/jose/jwt/v1", jwtv1.New())
+func New() *Module {
+	return &Module{}
+}
+
+func (m *Module) Parse(source string) (*jose.JSONWebKey, error) {
+	key, err := internals.Parse(source)
+	if err != nil {
+		return nil, err
+	}
+
+	return key, nil
+}
+
+func (m *Module) ParseKeySet(source string) ([]jose.JSONWebKey, error) {
+	keys, err := internals.ParseKeySet(source)
+	if err != nil {
+		return nil, err
+	}
+
+	return keys, nil
+}
+
+func (m *Module) Generate(algorithm string, seedIn interface{}) (*jose.JSONWebKey, error) {
+	jwk, err := internals.Generate(algorithm, seedIn)
+	if err != nil {
+		return nil, err
+	}
+
+	return jwk, nil
+}
+
+func (m *Module) Adopt(algorithm string, keyIn interface{}, isPublic bool) (*jose.JSONWebKey, error) {
+	jwk, err := internals.Adopt(algorithm, keyIn, isPublic)
+	if err != nil {
+		return nil, err
+	}
+
+	return jwk, nil
 }

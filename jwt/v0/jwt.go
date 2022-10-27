@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2021 Iván Szkiba
+// Copyright (c) 2022 Iván Szkiba
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,22 +20,43 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package jose
+package jwt
 
 import (
-	"go.k6.io/k6/js/modules"
+	"context"
 
-	jwkv0 "github.com/szkiba/xk6-jose/jwk/v0"
-	jwkv1 "github.com/szkiba/xk6-jose/jwk/v1"
-	jwtv0 "github.com/szkiba/xk6-jose/jwt/v0"
-	jwtv1 "github.com/szkiba/xk6-jose/jwt/v1"
+	"github.com/szkiba/xk6-jose/jwt/internals"
 )
 
-// Register the extensions on module initialization.
-func init() {
-	modules.Register("k6/x/jose/jwk/v0", jwkv0.New())
-	modules.Register("k6/x/jose/jwk/v1", jwkv1.New())
+type Module struct{}
 
-	modules.Register("k6/x/jose/jwt/v0", jwtv0.New())
-	modules.Register("k6/x/jose/jwt/v1", jwtv1.New())
+func New() *Module {
+	return &Module{}
+}
+
+func (m *Module) Sign(_ context.Context, key *jose.JSONWebKey, payload, header map[string]interface{}) (string, error) {
+	str, err := internals.Sign(key, payload, header)
+	if err != nil {
+		return "", err
+	}
+
+	return str, nil
+}
+
+func (m *Module) Decode(_ context.Context, compact string) (interface{}, error) {
+	payload, err := internals.Decode(compact)
+	if err != nil {
+		return nil, err
+	}
+
+	return payload, nil
+}
+
+func (m *Module) Verify(_ context.Context, compact string, keys ...interface{}) (interface{}, error) {
+	payload, err := internals.Verify(compact, keys)
+	if err != nil {
+		return nil, err
+	}
+
+	return payload, nil
 }

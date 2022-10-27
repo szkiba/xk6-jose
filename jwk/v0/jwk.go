@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2021 Iván Szkiba
+// Copyright (c) 2022 Iván Szkiba
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,21 +20,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package jwk
+package v0
 
 import (
+	"context"
 	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"reflect"
 	"strings"
 
+	"github.com/szkiba/xk6-jose/jwk/internals"
 	"go.k6.io/k6/js/common"
-	"gopkg.in/square/go-jose.v2"
 )
 
 type Module struct{}
@@ -43,9 +43,7 @@ func New() *Module {
 	return &Module{}
 }
 
-var ErrUnsupportedAlgorithm = errors.New("unsupported algorithm")
-
-func (m *Module) Parse(source string) (*jose.JSONWebKey, error) {
+func (m *Module) Parse(_ context.Context, source string) (*jose.JSONWebKey, error) {
 	key := &jose.JSONWebKey{}
 
 	if err := key.UnmarshalJSON([]byte(source)); err != nil {
@@ -55,7 +53,7 @@ func (m *Module) Parse(source string) (*jose.JSONWebKey, error) {
 	return key, nil
 }
 
-func (m *Module) ParseKeySet(source string) ([]jose.JSONWebKey, error) {
+func (m *Module) ParseKeySet(_ context.Context, source string) ([]jose.JSONWebKey, error) {
 	keyset := &jose.JSONWebKeySet{}
 
 	if err := json.Unmarshal([]byte(source), &keyset); err != nil {
@@ -78,11 +76,11 @@ func bytes(in interface{}) ([]byte, error) {
 	return val, nil
 }
 
-func (m *Module) Generate(algorithm string, seedIn interface{}) (*jose.JSONWebKey, error) {
+func (m *Module) Generate(_ context.Context, algorithm string, seedIn interface{}) (*jose.JSONWebKey, error) {
 	alg := strings.ToUpper(algorithm)
 
 	if alg != string(jose.ED25519) {
-		return nil, fmt.Errorf("%w: %s", ErrUnsupportedAlgorithm, algorithm)
+		return nil, fmt.Errorf("%w: %s", internals.ErrUnsupportedAlgorithm, algorithm)
 	}
 
 	seed, err := bytes(seedIn)
@@ -104,11 +102,11 @@ func (m *Module) Generate(algorithm string, seedIn interface{}) (*jose.JSONWebKe
 	return ed25519Adopt(priv, false), nil
 }
 
-func (m *Module) Adopt(algorithm string, keyIn interface{}, isPublic bool) (*jose.JSONWebKey, error) {
+func (m *Module) Adopt(_ context.Context, algorithm string, keyIn interface{}, isPublic bool) (*jose.JSONWebKey, error) {
 	alg := strings.ToUpper(algorithm)
 
 	if alg != string(jose.ED25519) {
-		return nil, fmt.Errorf("%w: %s", ErrUnsupportedAlgorithm, algorithm)
+		return nil, fmt.Errorf("%w: %s", internals.ErrUnsupportedAlgorithm, algorithm)
 	}
 
 	key, err := bytes(keyIn)
