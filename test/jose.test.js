@@ -28,8 +28,12 @@ export { options } from "./expect.js";
 
 import testJWK from "./jwk.test.js";
 import testJWT from "./jwt.test.js";
+import testJWE from "./jwe.test.js";
+import testJWS from "./jws.test.js";
 
 export default function () {
   group("JWK", testJWK);
   group("JWT", testJWT);
+  group("JWS", testJWS);
+  group("JWE", testJWE);
 }

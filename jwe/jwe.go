@@ -12,7 +12,7 @@ func New() *Module {
 }
 
 func (m *Module) Encrypt(ctx context.Context, key *jose.JSONWebKey, payload string, encAlg jose.ContentEncryption, algorithm jose.KeyAlgorithm) (string, error) {
-	crypter, err := jose.NewEncrypter(encAlg, jose.Recipient{Algorithm: algorithm, Key: key.Key, KeyID: key.KeyID}, nil)
+	crypter, err := jose.NewEncrypter(encAlg, jose.Recipient{Algorithm: algorithm, Key: key}, nil)
 	if err != nil {
 		return "", err
 	}
