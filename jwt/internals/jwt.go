@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2021 Iván Szkiba
+// Copyright (c) 2022 Iván Szkiba
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,10 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package jwt
+package internals
 
 import (
-	"context"
 	"errors"
 	"fmt"
 
@@ -31,15 +30,9 @@ import (
 	"gopkg.in/square/go-jose.v2/jwt"
 )
 
-type Module struct{}
-
-func New() *Module {
-	return &Module{}
-}
-
 var ErrUnsupportedKey = errors.New("unsupported key")
 
-func (m *Module) Sign(ctx context.Context, key *jose.JSONWebKey, payload, header map[string]interface{}) (string, error) {
+func Sign(key *jose.JSONWebKey, payload, header map[string]interface{}) (string, error) {
 	opts := &jose.SignerOptions{}
 	opts = opts.WithType("JWT")
 
@@ -60,7 +53,7 @@ func (m *Module) Sign(ctx context.Context, key *jose.JSONWebKey, payload, header
 	return str, nil
 }
 
-func (m *Module) Decode(ctx context.Context, compact string) (interface{}, error) {
+func Decode(compact string) (interface{}, error) {
 	token, err := jwt.ParseSigned(compact)
 	if err != nil {
 		return nil, err
@@ -75,7 +68,7 @@ func (m *Module) Decode(ctx context.Context, compact string) (interface{}, error
 	return payload, nil
 }
 
-func (m *Module) Verify(ctx context.Context, compact string, keys ...interface{}) (interface{}, error) {
+func Verify(compact string, keys ...interface{}) (interface{}, error) {
 	token, err := jwt.ParseSigned(compact)
 	if err != nil {
 		return nil, err
