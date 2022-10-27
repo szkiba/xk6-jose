@@ -19,14 +19,26 @@ Built for [k6](https://go.k6.io/k6) using [xk6](https://github.com/grafana/xk6).
 
 ## Usage
 
+### Until v0.32.x of k6
 Import an entire module's contents:
-```JavaScript
-import * as jwt from "k6/x/jose/jwt";
+```js
+import * as jwt from "k6/x/jose/jwt/v0";
 ```
 
 Import a single export from a module:
-```JavaScript
-import { sign } from "k6/x/jose/jwt";
+```js
+import { sign } from "k6/x/jose/jwt/v0";
+```
+
+### Post v0.32.x of k6
+Import an entire module's contents:
+```js
+import * as jwt from "k6/x/jose/jwt/v1";
+```
+
+Import a single export from a module:
+```js
+import { sign } from "k6/x/jose/jwt/v1";
 ```
 
 ## Build
