@@ -7,5 +7,7 @@ The underlying implementation is https://github.com/square/go-jose
 
 ### Namespaces
 
+- [jwe](modules/jwe.md)
 - [jwk](modules/jwk.md)
+- [jws](modules/jws.md)
 - [jwt](modules/jwt.md)
