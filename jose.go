@@ -23,13 +23,17 @@
 package jose
 
 import (
-	"go.k6.io/k6/js/modules"
+	"github.com/szkiba/xk6-jose/jwe"
 	"github.com/szkiba/xk6-jose/jwk"
+	"github.com/szkiba/xk6-jose/jws"
 	"github.com/szkiba/xk6-jose/jwt"
+	"go.k6.io/k6/js/modules"
 )
 
 // Register the extensions on module initialization.
 func init() {
 	modules.Register("k6/x/jose/jwk", jwk.New())
 	modules.Register("k6/x/jose/jwt", jwt.New())
+	modules.Register("k6/x/jose/jws", jws.New())
+	modules.Register("k6/x/jose/jwe", jwe.New())
 }
