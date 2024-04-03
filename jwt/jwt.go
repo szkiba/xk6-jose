@@ -23,12 +23,9 @@
 package jwt
 
 import (
-	"context"
 	"errors"
-	"fmt"
 
-	"gopkg.in/square/go-jose.v2"
-	"gopkg.in/square/go-jose.v2/jwt"
+	"github.com/go-jose/go-jose/v4"
 )
 
 type Module struct{}
@@ -39,7 +36,8 @@ func New() *Module {
 
 var ErrUnsupportedKey = errors.New("unsupported key")
 
-func (m *Module) Sign(ctx context.Context, key *jose.JSONWebKey, payload, header map[string]interface{}) (string, error) {
+func (m *Module) Sign(key *jose.JSONWebKey, payloadStr string, header map[string]interface{}) (string, error) {
+	payload := []byte(payloadStr)
 	opts := &jose.SignerOptions{}
 	opts = opts.WithType("JWT")
 
@@ -47,60 +45,20 @@ func (m *Module) Sign(ctx context.Context, key *jose.JSONWebKey, payload, header
 		opts.WithHeader(jose.HeaderKey(k), v)
 	}
 
-	sig, err := jose.NewSigner(jose.SigningKey{Algorithm: jose.SignatureAlgorithm(key.Algorithm), Key: key}, opts)
+	signer, err := jose.NewSigner(jose.SigningKey{Algorithm: jose.SignatureAlgorithm(key.Algorithm), Key: key}, opts)
 	if err != nil {
 		return "", err
 	}
 
-	str, err := jwt.Signed(sig).Claims(payload).CompactSerialize()
+	object, err := signer.Sign(payload)
+	if err != nil {
+		return "", err
+	}
+
+	str, err := object.CompactSerialize()
 	if err != nil {
 		return "", err
 	}
 
 	return str, nil
-}
-
-func (m *Module) Decode(ctx context.Context, compact string) (interface{}, error) {
-	token, err := jwt.ParseSigned(compact)
-	if err != nil {
-		return nil, err
-	}
-
-	payload := map[string]interface{}{}
-
-	if err := token.UnsafeClaimsWithoutVerification(&payload); err != nil {
-		return nil, err
-	}
-
-	return payload, nil
-}
-
-func (m *Module) Verify(ctx context.Context, compact string, keys ...interface{}) (interface{}, error) {
-	token, err := jwt.ParseSigned(compact)
-	if err != nil {
-		return nil, err
-	}
-
-	set := make([]jose.JSONWebKey, len(keys))
-
-	for _, k := range keys {
-		switch k.(type) {
-		case jose.JSONWebKey:
-			set = append(set, k.(jose.JSONWebKey))
-		case *jose.JSONWebKey:
-			set = append(set, *k.(*jose.JSONWebKey))
-		case *jose.JSONWebKeySet:
-			set = append(set, k.(*jose.JSONWebKeySet).Keys...)
-		default:
-			return nil, fmt.Errorf("%w: %T %v", ErrUnsupportedKey, k, k)
-		}
-	}
-
-	payload := map[string]interface{}{}
-
-	if err := token.Claims(&jose.JSONWebKeySet{Keys: set}, &payload); err != nil {
-		return nil, err
-	}
-
-	return payload, nil
 }

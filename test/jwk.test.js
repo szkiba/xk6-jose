@@ -27,11 +27,10 @@ export { options } from "./expect.js";
 import { describe } from "./expect.js";
 
 import { b64encode } from "k6/encoding";
-import { randomBytes } from "k6/crypto";
 import { group } from "k6";
+import { crypto } from 'k6/experimental/webcrypto';
 
 import jwk from "k6/x/jose/jwk";
-import xcrypto from "k6/x/crypto";
 
 const ALG = "ed25519";
 
@@ -50,11 +49,16 @@ export default function () {
     expectLength("kid").toBeGreaterThan(0);
   });
 
-  describe("generate from seed", (t) => {
+  describe("generate from seed", async (t) => {
     const seed = new ArrayBuffer(32);
     const bytes = new Uint8Array(seed);
-    new Uint8Array(randomBytes(32)).forEach((value, idx) => (bytes[idx] = value));
-    const pair = xcrypto.generateKeyPair(ALG, seed);
+    new Uint8Array(crypto.getRandomValues(32)).forEach((value, idx) => (bytes[idx] = value));
+    const pair = await crypto.subtle.generateKey({
+      name: 'AES-CBC',
+      length: 256,
+    },
+    true,
+    ['encrypt', 'decrypt']);
 
     const key = JSON.parse(JSON.stringify(jwk.generate(ALG, seed)));
     const expect = (prop) => t.expect(key[prop]).as(prop);
@@ -75,12 +79,17 @@ export default function () {
     t.expect(all.length).as("number of keys").toEqual(2);
   });
 
-  describe("adopt", (t) => {
+  describe("adopt", async (t) => {
     const seed = new ArrayBuffer(32);
     const bytes = new Uint8Array(seed);
     new Uint8Array(randomBytes(32)).forEach((value, idx) => (bytes[idx] = value));
 
-    const pair = xcrypto.generateKeyPair(ALG, seed);
+    const pair = await crypto.subtle.generateKey({
+      name: 'AES-CBC',
+      length: 256,
+    },
+    true,
+    ['encrypt', 'decrypt']);
     let key = JSON.parse(JSON.stringify(jwk.adopt(ALG, pair.privateKey)));
     const expect = (prop) => t.expect(key[prop]).as(prop);
 

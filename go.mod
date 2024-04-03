@@ -1,10 +1,12 @@
-module github.com/szkiba/xk6-jose
+module github.com/jadKhoury1/xk6-jose
 
-go 1.19
+go 1.21
+
+toolchain go1.22.0
 
 require (
+	github.com/go-jose/go-jose/v4 v4.0.1
 	go.k6.io/k6 v0.45.1
-	gopkg.in/square/go-jose.v2 v2.5.1
 )
 
 require (
@@ -24,9 +26,9 @@ require (
 	github.com/serenize/snaker v0.0.0-20201027110005-a7ad2135616e // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spf13/afero v1.9.2 // indirect
-	golang.org/x/crypto v0.9.0 // indirect
-	golang.org/x/sys v0.8.0 // indirect
-	golang.org/x/text v0.9.0 // indirect
+	golang.org/x/crypto v0.19.0 // indirect
+	golang.org/x/sys v0.17.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	gopkg.in/guregu/null.v3 v3.3.0 // indirect
 )

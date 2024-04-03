@@ -28,7 +28,7 @@ import jwt from "k6/x/jose/jwt";
 import jwk from "k6/x/jose/jwk";
 import { describe } from "./expect.js";
 
-const ALG = "ed25519";
+const ALG = "ED25519";
 
 export default function () {
   describe("sign", (t) => {
@@ -36,28 +36,5 @@ export default function () {
 
     t.expect(token.length).as("token length").toBeGreaterThan(0);
     t.expect(token.split(".").length).as("number of fields").toEqual(3);
-  });
-
-  describe("verify", (t) => {
-    const key1 = jwk.generate(ALG);
-    const key2 = jwk.generate(ALG);
-
-    const token = jwt.sign(key2, { foo: "bar", answer: 42 });
-    const payload = jwt.verify(token, key1.public(), key2.public());
-    const expect = (prop) => t.expect(payload[prop]).as(prop);
-
-    expect("answer").toEqual(42);
-    expect("foo").toEqual("bar");
-  });
-
-  describe("decode", (t) => {
-    const key = jwk.generate(ALG);
-    const token = jwt.sign(key, { foo: "bar", answer: 42 });
-
-    const payload = jwt.decode(token);
-    const expect = (prop) => t.expect(payload[prop]).as(prop);
-
-    expect("answer").toEqual(42);
-    expect("foo").toEqual("bar");
   });
 }

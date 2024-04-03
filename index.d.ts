@@ -75,21 +75,18 @@ export namespace jwt {
    * @returns The signed JWT in compact serialization form
    */
   function sign(key: jwk.Key, payload: object, header?: object): string;
+}
 
-  /**
-   * Decode JSON Web Token payload without signature validation.
-   *
-   * @param token The JWT to decode
-   * @returns The decoded payload
-   */
-  function decode(token: string): object;
 
+export namespace jwe {
   /**
-   * Verify JSON Web Token signature and decode payload on success.
+   * Create JWE from a public key and a payload
    *
-   * @param token The JWT to verify
-   * @param key The signature validation key (or keys)
-   * @returns The payload of the verified token
+   * @param key The signing key
+   * @param payload The payload to be encrypted
+   * @param kid The kid to be set in the header
+   * @param alg The algorithim used to generate the public key
+   * @returns The signed JWT in compact serialization form
    */
-  function verify(token: string, ...key: jwk.Key[]): object;
+  function createEncrypt(publicKeyPem: string, payload: string, kid: string, alg: string): string;
 }
