@@ -1,5 +1,9 @@
 # xk6-jose
 
+> [!WARNING]
+> This extension is deprecated. In the meantime, [k6 supports webcrypto](https://grafana.com/docs/k6/latest/javascript-api/k6-experimental/webcrypto/), it is advisable to use it in new tests.
+> If you need this extension because of your old tests or if you want to continue development, feel free to fork it.
+
 A k6 extension for *Javascript Object Signing and Encryption (JOSE)* standards.
 
 **Features**
